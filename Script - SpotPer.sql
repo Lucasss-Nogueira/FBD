@@ -60,7 +60,11 @@ Create table telefones(
 	telefone	varchar(40),
 
 	constraint pk_telefones
-		primary key (cod_grav,telefone)
+		primary key (cod_grav,telefone),
+
+	constraint fk_cod_grav_telefones
+		foreign key (cod_grav)
+			references gravadora
 
 )
 
@@ -68,12 +72,12 @@ Create table album(
 
 	cod_album	smallint,
 	tipo_compra	varchar(10),
-	descrição	varchar(100),
+	descri	varchar(100),
 	pr_compra	dec(11,2),
 	pr_venda	dec(11,2),
 	dt_compra	date,
 	dt_venda	date,
-	meio_físico	varchar(10),
+	meio_fisico	varchar(10),
 	cod_grav	smallint,
 
 	constraint pk_album 
@@ -85,24 +89,24 @@ Create table album(
 
 )
 
-Create table composição(
+Create table composicao(
 
-	cod_composição	smallint,
-	descrição	varchar(40)
+	cod_comp	smallint,
+	descri	varchar(40)
 	
-	constraint pk_composição
-		primary key (cod_composição)
+	constraint pk_composicao
+		primary key (cod_comp)
 
 )
 
 Create table faixa(
 
 	num_faixa	int,
-	descrição	varchar(50),
-	tempo_execução	time,
-	tipo_gravação	varchar(15),
+	descri	varchar(50),
+	tempo_exec	time,
+	tipo_grav	varchar(15),
 	cod_album	smallint,
-	cod_composição	smallint,
+	cod_comp	smallint,
 
 	constraint pk_faixa
 		primary key (num_faixa),
@@ -110,9 +114,10 @@ Create table faixa(
 	constraint fk_cod_album_Faixa
 		foreign key (cod_album)
 			references album,
-	constraint fk_cod_composição_Faixa
-		foreign key (cod_composição)
-			references composição
+
+	constraint fk_cod_comp_Faixa
+		foreign key (cod_comp)
+			references composicao
 
 )
 
@@ -179,8 +184,50 @@ Create table faixa_interprete(
 
 )
 
+Create table periodo_musical(
+
+	cod_pm	smallint,
+	descri	varchar(100),
+	temp_ativo	time
+
+	constraint pk_periodo_musical
+		primary key (cod_pm)
+
+)
+
 Create table compositor(
 
-	cod_compositor
+	cod_compositor	smallint,
+	dt_nasc	date,
+	dt_morte	date,
+	nome	varchar(50),
+	cid_nasc	varchar(100),
+	pais_nasc	varchar(100),
+	cod_pm	smallint,
+
+	constraint pk_compositor
+		primary key (cod_compositor),
+
+	constraint fk_cod_pm_Compositor
+		foreign key (cod_pm)
+			references periodo_musical
+
+)
+
+Create table faixa_compositor(
+
+	cod_compositor	smallint,
+	num_faixa	int,
+
+	constraint pk_faixa_compositor
+		primary key (cod_compositor,num_faixa),
+
+	constraint fk_cod_compositor_faixa_compositor
+		foreign key (cod_compositor)
+			references compositor,
+
+	constraint pk_num_faixa_faixa_compositor
+		foreign key (num_faixa)
+			references faixa
 
 )
