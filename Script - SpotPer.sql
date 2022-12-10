@@ -52,7 +52,7 @@ Create table gravadora(
 	constraint pk_gravadora
 		primary key (cod_grav)
 
-)
+) on SpotPer_fg01
 
 Create table telefones(
 
@@ -66,7 +66,7 @@ Create table telefones(
 		foreign key (cod_grav)
 			references gravadora
 
-)
+) on SpotPer_fg01
 
 Create table album(
 
@@ -87,7 +87,7 @@ Create table album(
 		foreign key (cod_grav)
 			references gravadora
 
-)
+) on SpotPer_fg01
 
 Create table composicao(
 
@@ -97,7 +97,7 @@ Create table composicao(
 	constraint pk_composicao
 		primary key (cod_comp)
 
-)
+) on SpotPer_fg01
 
 Create table faixa(
 
@@ -119,7 +119,16 @@ Create table faixa(
 		foreign key (cod_comp)
 			references composicao
 
-)
+) on SpotPer_fg02
+
+--Precisa dropar o índice primário que é criado automáticamente
+Create Clustered Index Faixa_IDX_Cod_Album
+	on faixa (cod_album)
+	with (fillfactor=100, pad_index=on)
+
+Create NonClustered Index Faixa_IDX_Cod_Comp
+	on faixa (cod_comp)
+	with (fillfactor=100, pad_index=on)
 
 
 Create table playlist(
@@ -132,7 +141,7 @@ Create table playlist(
 	constraint pk_playlist 
 		primary key (cod_playlist)
 
-)
+) on SpotPer_fg02
 
 Create table faixa_playlist(
 
@@ -151,7 +160,7 @@ Create table faixa_playlist(
 		foreign key (num_faixa)
 			references faixa
 	
-)
+) on SpotPer_fg02
 
 
 Create table interprete(
@@ -163,7 +172,7 @@ Create table interprete(
 	constraint pk_interprete
 		primary key (cod_inte)
 
-)
+) on SpotPer_fg01
 
 Create table faixa_interprete(
 
@@ -182,7 +191,7 @@ Create table faixa_interprete(
 		foreign key (num_faixa)
 			references faixa
 
-)
+) on SpotPer_fg01
 
 Create table periodo_musical(
 
@@ -193,7 +202,7 @@ Create table periodo_musical(
 	constraint pk_periodo_musical
 		primary key (cod_pm)
 
-)
+) on SpotPer_fg01
 
 Create table compositor(
 
@@ -212,7 +221,7 @@ Create table compositor(
 		foreign key (cod_pm)
 			references periodo_musical
 
-)
+) on SpotPer_fg01
 
 Create table faixa_compositor(
 
@@ -230,4 +239,4 @@ Create table faixa_compositor(
 		foreign key (num_faixa)
 			references faixa
 
-)
+) on SpotPer_fg01
