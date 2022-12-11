@@ -1,17 +1,21 @@
-create view ver_playlist(nome_playlist, qtde_album)
+drop view ver_playlist
+go
+create  view ver_playlist(nome_playlist, qtde_album)
 with
   schemabinding
 as
-select p.nome, count(distinct alb.cod_alb) from Playlist p inner join Faixa_Playlist fp inner join  Faixa f inner join album alb
-on p.cod_playlist = fp.cod_playlist on fp.num_faixa = f.num_faixa on f.cod_alb = alb.cod_alb
-group by p.nome, alb.cod_alb
+select p.nome, count_big(*) from dbo.Playlist p inner join dbo.Faixa_Playlist fp inner join  dbo.Faixa f inner join dbo.album alb
+on f.cod_album = alb.cod_album on fp.num_faixa = f.num_faixa on p.cod_playlist = fp.cod_playlist
+group by p.nome
+go
+
+go
+create unique clustered index I_VP on ver_playlist(nome_playlist)
+go
 
 
-create unique clustered index I_VP on ver_playlist(playlist)
 
-
-
-
+go
 -- albuns com obras desse compositor
 create function obras_comp (@nome_cp varchar(40))
 returns @tab_result table(nome_alb varchar(40))
@@ -24,8 +28,9 @@ where cp.nome = @nome_cp
 return
 end
 
+go
 
-
+go
 -----
 --8c
 --Listar nome do compositor com maior número de faixas nas playlists existentes
@@ -40,8 +45,10 @@ select cp.nome from compositor cp left outer join faixa_compositor fc left outer
 group by cp.cod_compositor, cp.nome
 having count(distinct fc.num_faixa) >= all (select count(distinct f.num_faixa) from faixa f, faixa_playlist fp, playlist p 
 where f.num_faixa = fp.num_faixa and fp.cod_playlist = p.cod_playlist group by f.num_faixa)
+go
 
 
+go
 --8d
 --(d) Listar playlists, cujas faixas (todas) têm tipo de composição “Concerto” e período “Barroco”.
 
@@ -63,3 +70,4 @@ having count(distinct f.num_faixa) = (select count( distinct f.num_faixa)
 													  pm.descri like 'Barroco' and 
 													  cmp.descri like 'Concerto'
 											)
+go
