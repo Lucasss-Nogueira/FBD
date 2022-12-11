@@ -14,11 +14,12 @@ create unique clustered index I_VP on ver_playlist(playlist)
 
 -- albuns com obras desse compositor
 create function obras_comp (@nome_cp varchar(40))
-returns @tab_result(@nome_alb varchar(40))
+returns @tab_result table(nome_alb varchar(40))
 as
 begin
 insert into @tab_result
-select distinct alb.nome from Album alb inner join Faixa f inner join Faixa_Compositor fc inner join Compositor cp on alb.cod_alb = f.cod_alb on f.num_faixa = fc.num_faixa on fc.cod_compositor =  cp.cod_compositor
+select distinct alb.descri from album alb inner join faixa f inner join faixa_compositor fc inner join compositor cp 
+							on fc.cod_compositor =  cp.cod_compositor  on f.num_faixa = fc.num_faixa  on alb.cod_album = f.cod_album
 where cp.nome = @nome_cp
 return
 end
