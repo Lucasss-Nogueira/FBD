@@ -4,7 +4,7 @@ create  view ver_playlist(nome_playlist, qtde_album)
 with
   schemabinding
 as
-select p.nome, count_big(*) from dbo.Playlist p inner join dbo.Faixa_Playlist fp inner join  dbo.Faixa f inner join dbo.album alb
+select p.nome, count_big(distinct alb.cod_album) from dbo.Playlist p inner join dbo.Faixa_Playlist fp inner join  dbo.Faixa f inner join dbo.album alb
 on f.cod_album = alb.cod_album on fp.num_faixa = f.num_faixa on p.cod_playlist = fp.cod_playlist
 group by p.nome
 go
