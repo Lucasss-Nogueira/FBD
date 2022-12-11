@@ -29,10 +29,16 @@ end
 -----
 --8c
 --Listar nome do compositor com maior número de faixas nas playlists existentes
-select cp.nome from Compositor cp left outer join Faixa_Compositor fc left outer join Faixa f left outer join Faixa_Playlist fp left outer join Playlist p 
-on fc.cod_compositor =  cp.cod_compositor on f.num_faixa = fc.num_faixa on fp.num_faixa = f.num_faixa on p.cod_playlist = fp.cod_playlist
+select cp.nome from compositor cp left outer join faixa_compositor fc left outer join faixa f left outer join faixa_playlist fp left outer join playlist p 
+				on p.cod_playlist = fp.cod_playlist
+				on fp.num_faixa = f.num_faixa
+				on f.num_faixa = fc.num_faixa 
+				on fc.cod_compositor =  cp.cod_compositor 
+				
+				 
+
 group by cp.cod_compositor, cp.nome
-having count(distinct fc.num_faixa) >= all select (count(distinct f.num_faixa) from Faixa f, Faixa_Playlist fp, Playlist p 
+having count(distinct fc.num_faixa) >= all (select count(distinct f.num_faixa) from faixa f, faixa_playlist fp, playlist p 
 where f.num_faixa = fp.num_faixa and fp.cod_playlist = p.cod_playlist group by f.num_faixa)
 
 
@@ -40,18 +46,20 @@ where f.num_faixa = fp.num_faixa and fp.cod_playlist = p.cod_playlist group by f
 --(d) Listar playlists, cujas faixas (todas) têm tipo de composição “Concerto” e período “Barroco”.
 
 --Select dos nomes das playlists
-select p.cod_playlist,p.nome from playlist p inner join Faixa_Playlist fp inner join  Faixa f on p.cod_playlist = fp.cod_playlist on fp.num_faixa = f.num_faixa
+select p.cod_playlist,p.nome from playlist p inner join faixa_playlist fp inner join  faixa f 
+								on fp.num_faixa = f.num_faixa
+								on p.cod_playlist = fp.cod_playlist 
+								
 group by p.cod_playlist,p.nome
 -- qtde total de faixas nessa playlist igual a qtde total de faixas nessa playlist que estao nesse periodo musical e nessa composicao, logo assim somente as playlist com todas as faixas nesse pm e cmp serao aceitas
-having count(distinct f.num_faixa) = select (count( distinct f.num_faixa) 
-						  from Faixa f, Faixa_Compositor fc, Compositor cp, Periodo_Musical pm , Composicao cmp, playlist p, Faixa_Playlist fp
-						  where	  f.cod_composicao = cmp.cod_composicao and
-								  f.num_faixa = fc.num_faixa and
-								  fc.cod_compositor = cp.cod_compositor and 
-								  cp.cod_pm = pm.cod_pm and 
-								  f.num_faixa = fp.num_faixa and 
-								  fp.cod_playlist = p.cod_playlist and
-								  pm.descricao like 'Barroco' and 
-								  cmp.descricao like 'Concerto'
+having count(distinct f.num_faixa) = (select count( distinct f.num_faixa) 
+											  from faixa f, faixa_compositor fc, compositor cp, periodo_Musical pm , composicao cmp, playlist p, faixa_playlist fp
+											  where	  f.cod_comp = cmp.cod_comp and
+													  f.num_faixa = fc.num_faixa and
+													  fc.cod_compositor = cp.cod_compositor and 
+													  cp.cod_pm = pm.cod_pm and 
+													  f.num_faixa = fp.num_faixa and 
+													  fp.cod_playlist = p.cod_playlist and
+													  pm.descri like 'Barroco' and 
+													  cmp.descri like 'Concerto'
 											)
-
