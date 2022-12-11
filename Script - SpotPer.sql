@@ -1,3 +1,5 @@
+--drop database SpotPer
+
 create database SpotPer
 on
 	PRIMARY 
@@ -41,6 +43,9 @@ on
 	)
 
 ------//                                    --------///---------                                    //---------------
+use SpotPer
+
+go
 
 Create table gravadora(
 
@@ -109,7 +114,7 @@ Create table faixa(
 	cod_comp	smallint,
 
 	constraint pk_faixa
-		primary key (num_faixa),
+		primary key nonclustered (num_faixa),
 
 	constraint fk_cod_album_Faixa
 		foreign key (cod_album)
@@ -121,7 +126,8 @@ Create table faixa(
 
 ) on SpotPer_fg02
 
---Precisa dropar o índice primário que é criado automáticamente
+--É preciso dropar o índice primário que é criado automáticamente  
+
 Create Clustered Index Faixa_IDX_Cod_Album
 	on faixa (cod_album)
 	with (fillfactor=100, pad_index=on)
@@ -240,3 +246,5 @@ Create table faixa_compositor(
 			references faixa
 
 ) on SpotPer_fg01
+
+go
