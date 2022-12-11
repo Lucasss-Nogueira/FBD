@@ -36,3 +36,21 @@ where f.num_faixa = fp.num_faixa and fp.cod_playlist = p.cod_playlist group by f
 
 
 --8d
+--(d) Listar playlists, cujas faixas (todas) têm tipo de composição “Concerto” e período “Barroco”.
+
+--Select dos nomes das playlists
+select p.nome from playlist p inner join Faixa_Playlist fp inner join  Faixa f on p.cod_playlist = fp.cod_playlist on fp.num_faixa = f.num_faixa
+group by p.cod_playlist,p.nome
+-- qtde total de faixas nessa playlist igual a qtde total de faixas nessa playlist que estao nesse periodo musical e nessa composicao, logo assim somente as playlist com todas as faixas nesse pm e cmp serao aceitas
+having count(distinct f.num_faixa) = select (count( distinct f.num_faixa) 
+											  from Faixa f, Faixa_Compositor fc, Compositor cp, Periodo_Musical pm , Composicao cmp, playlist p, Faixa_Playlist fp
+											  where	  f.cod_composicao = cmp.cod_composicao and
+													  f.num_faixa = fc.num_faixa and
+													  fc.cod_compositor = cp.cod_compositor and 
+													  cp.cod_pm = pm.cod_pm and 
+													  f.num_faixa = fp.num_faixa and 
+													  fp.cod_playlist = p.cod_playlist and
+													  pm.descricao like 'Barroco' and 
+													  cmp.descricao like 'Concerto'
+											)
+
