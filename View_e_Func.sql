@@ -1,4 +1,75 @@
-drop view ver_playlist
+
+---- Triggers ----
+
+go
+CREATE TRIGGER album_barrocoDDD_trigger
+       ON album
+       FOR INSERT, UPDATE
+       AS
+  
+		if (select i.cod_album from inserted i)
+		 in
+		( SELECT i.cod_album 
+			FROM inserted i inner join faixa f inner join faixa_compositor fc inner join compositor cp inner join periodo_musical pm 
+				on pm.cod_pm=cp.cod_pm on cp.cod_compositor=fc.cod_compositor on fc.num_faixa=f.num_faixa on f.cod_album=i.cod_album
+					where pm.descri like 'Barroco' and f.tipo_grav not like 'DDD')
+			BEGIN
+				   RAISERROR ('Álbum com faixas do período Barroco com gravações que não são do tipo DDD', 10, 6)
+				   ROLLBACK TRANSACTION
+			END
+go
+
+go
+CREATE TRIGGER album_64_trigger
+       ON faixa
+       FOR INSERT, UPDATE
+       AS
+		declare @qtde int
+		declare @cod_album smallint
+
+		select @cod_album=cod_album from inserted
+
+		SELECT  @qtde=count(distinct num_faixa)
+			FROM faixa f, album a
+				where a.cod_album= @cod_album
+
+		if @qtde>64
+			BEGIN
+				RAISERROR ('Álbum ficaria com mais de 64 faixas', 10, 6)
+				ROLLBACK TRANSACTION
+			END
+go
+
+CREATE TRIGGER album_pr_compra_trigger
+       ON album
+       FOR INSERT, UPDATE
+       AS
+		declare @pr_inserted dec(11,2)
+		declare @media dec(11,2)
+
+		select @pr_inserted=pr_compra from inserted
+
+		select @media=avg(pr_compra)
+			from album a1 inner join faixa f1 
+				on a1.cod_album=f1.cod_album
+					group by a1.cod_album
+						having count(distinct num_faixa)= (
+															select count(distinct num_faixa)
+																from album a inner join faixa f 
+																	on a.cod_album=f.cod_album
+																		where f.tipo_grav like 'DDD' and a.cod_album=a1.cod_album)
+	
+		if @pr_inserted > 3*@media
+			BEGIN
+				RAISERROR ('Álbum ficaria com mais de 64 faixas', 10, 6)
+				ROLLBACK TRANSACTION
+			END
+go
+
+--------
+
+---------------- View --
+--drop view ver_playlist
 go
 create  view ver_playlist(nome_playlist, qtde_album)
 with
@@ -13,8 +84,8 @@ go
 create unique clustered index I_VP on ver_playlist(nome_playlist)
 go
 
-
-
+-------------
+-------Função-------
 go
 -- albuns com obras desse compositor
 create function obras_comp (@nome_cp varchar(40))
@@ -29,7 +100,9 @@ return
 end
 
 go
+---------------
 
+-----Consultas-----
 go
 -----
 --8c
@@ -50,9 +123,6 @@ go
 
 go
 --8d
---(d) Listar playlists, cujas faixas (todas) têm tipo de composição “Concerto” e período “Barroco”.
-
---Select dos nomes das playlists
 select p.cod_playlist,p.nome from playlist p inner join faixa_playlist fp inner join  faixa f 
 								on fp.num_faixa = f.num_faixa
 								on p.cod_playlist = fp.cod_playlist 
@@ -60,14 +130,17 @@ select p.cod_playlist,p.nome from playlist p inner join faixa_playlist fp inner 
 group by p.cod_playlist,p.nome
 -- qtde total de faixas nessa playlist igual a qtde total de faixas nessa playlist que estao nesse periodo musical e nessa composicao, logo assim somente as playlist com todas as faixas nesse pm e cmp serao aceitas
 having count(distinct f.num_faixa) = (select count( distinct f.num_faixa) 
-											  from faixa f, faixa_compositor fc, compositor cp, periodo_Musical pm , composicao cmp, playlist p, faixa_playlist fp
+											  from faixa f, faixa_compositor fc, compositor cp, periodo_Musical pm , composicao cmp, playlist p2, faixa_playlist fp
 											  where	  f.cod_comp = cmp.cod_comp and
 													  f.num_faixa = fc.num_faixa and
 													  fc.cod_compositor = cp.cod_compositor and 
 													  cp.cod_pm = pm.cod_pm and 
 													  f.num_faixa = fp.num_faixa and 
-													  fp.cod_playlist = p.cod_playlist and
+													  fp.cod_playlist = p2.cod_playlist and
 													  pm.descri like 'Barroco' and 
 													  cmp.descri like 'Concerto'
+													  and p.cod_playlist = p2.cod_playlist
 											)
 go
+
+--------------
