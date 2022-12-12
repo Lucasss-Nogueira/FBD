@@ -116,8 +116,12 @@ select cp.nome from compositor cp left outer join faixa_compositor fc left outer
 				 
 
 group by cp.cod_compositor, cp.nome
-having count(distinct fc.num_faixa) >= all (select count(distinct f.num_faixa) from faixa f, faixa_playlist fp, playlist p 
-where f.num_faixa = fp.num_faixa and fp.cod_playlist = p.cod_playlist group by f.num_faixa)
+having count(distinct fc.num_faixa) >= all (select count(distinct f.num_faixa) from compositor cp left outer join faixa_compositor fc left outer join faixa f left outer join faixa_playlist fp left outer join playlist p 
+												on p.cod_playlist = fp.cod_playlist
+												on fp.num_faixa = f.num_faixa
+												on f.num_faixa = fc.num_faixa 
+												on fc.cod_compositor =  cp.cod_compositor
+												group by cp.cod_compositor)
 go
 
 
