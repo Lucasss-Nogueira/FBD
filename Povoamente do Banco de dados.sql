@@ -40,3 +40,6 @@ select * from faixa
 delete from faixa where cod_album=1
 
 Update album  set pr_compra = 123 where cod_album=1
+
+
+go

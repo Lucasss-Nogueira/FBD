@@ -76,13 +76,13 @@ Create table album(
 	descri	varchar(100),
 	pr_compra	dec(11,2),
 	pr_venda	dec(11,2),
-	dt_compra	date,
 	dt_grav	date,
+	dt_compra	date,
 	meio_fisico	varchar(10),
 	cod_grav	smallint,
 
 	constraint ck_2000 
-		check (dt_grav>'10/10/2000'),
+		check (dt_grav > '01/01/2000'),
 
 	constraint pk_album 
 		primary key (cod_album),
@@ -125,7 +125,7 @@ Create table faixa(
 
 ) on SpotPer_fg02
 
---É preciso dropar o índice primário que é criado automáticamente  
+--ï¿½ preciso dropar o ï¿½ndice primï¿½rio que ï¿½ criado automï¿½ticamente  
 
 Create Clustered Index Faixa_IDX_Cod_Album
 	on faixa (cod_album)
