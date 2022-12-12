@@ -77,9 +77,12 @@ Create table album(
 	pr_compra	dec(11,2),
 	pr_venda	dec(11,2),
 	dt_compra	date,
-	dt_venda	date,
+	dt_grav	date,
 	meio_fisico	varchar(10),
 	cod_grav	smallint,
+
+	constraint ck_2000 
+		check (dt_grav>'10/10/2000'),
 
 	constraint pk_album 
 		primary key (cod_album),

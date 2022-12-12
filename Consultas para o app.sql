@@ -4,7 +4,7 @@ select a.cod_album, a.descri, f.num_faixa, f.descri
 	from album a inner join faixa f on a.cod_album=f.cod_album
 
 go
-
+--- Utilizadas para povoar o banco de dados
 go
 insert into gravadora values (1,'Ipanema','Rua do Baralho','www.gravadoramassa')
 insert into gravadora values (2,'EMMY','Rua do Barulho','www.gravadoramassaDEMAIS')
@@ -31,7 +31,7 @@ insert into faixa values (3,'Música Barroca sem DDD','00:05:30','ADD',1,1)
 
 
 go
-
+----
 
 select * from faixa_playlist
 select * from album

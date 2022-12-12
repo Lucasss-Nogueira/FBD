@@ -1,6 +1,6 @@
 
 ---- Triggers ----
-
+--3.a)
 go
 CREATE TRIGGER album_barrocoDDD_trigger
        ON album
@@ -18,7 +18,7 @@ CREATE TRIGGER album_barrocoDDD_trigger
 				   ROLLBACK TRANSACTION
 			END
 go
-
+--3.b)
 go
 CREATE TRIGGER album_64_trigger
        ON faixa
@@ -39,7 +39,7 @@ CREATE TRIGGER album_64_trigger
 				ROLLBACK TRANSACTION
 			END
 go
-
+--3.c) Foi feito na própria criação da tabela faixa adicionando on delete cascade na foreign key fk_cod_album_Faixa
 CREATE TRIGGER album_pr_compra_trigger
        ON album
        FOR INSERT, UPDATE
@@ -67,7 +67,7 @@ CREATE TRIGGER album_pr_compra_trigger
 go
 
 --------
-
+--5)
 ---------------- View --
 --drop view ver_playlist
 go
@@ -85,6 +85,7 @@ create unique clustered index I_VP on ver_playlist(nome_playlist)
 go
 
 -------------
+--6)
 -------Função-------
 go
 -- albuns com obras desse compositor
