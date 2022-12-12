@@ -1,7 +1,7 @@
 go
 
 select a.cod_album, a.descri, f.num_faixa, f.descri
-	from album a left outer join faixa f on a.cod_album=f.cod_album
+	from album a inner join faixa f on a.cod_album=f.cod_album
 
 go
 
@@ -23,8 +23,20 @@ insert into faixa values (1,'HelloMusic','00:02:30','DDD',2,1)
 insert into playlist values (1,'00:00:00','10/10/2000','Playlistmassa')
 insert into faixa_playlist values (1,1,0,'01/11/2000')
 
+insert into periodo_musical values (1,'Barroco','22:30:00')
+insert into compositor values (1,'10/10/1780','10/10/1840','Pedrin Barroquista','Veneza','Itália',1)
+insert into faixa values (2,'Música Barroca DDD','00:06:30','DDD',2,1)
+
+insert into faixa values (3,'Música Barroca sem DDD','00:05:30','ADD',1,1)
+
 
 go
 
 
 select * from faixa_playlist
+select * from album
+select * from faixa
+
+delete from faixa where cod_album=1
+
+Update album  set pr_compra = 123 where cod_album=1

@@ -105,8 +105,39 @@ go
 -----Consultas-----
 go
 -----
+--8a
+--Listar os álbum com preço de compra maior que a média de preços de compra de todos os álbuns
+select a.cod_album,a.descri 
+	from album a
+		where a.pr_compra > (select avg(pr_compra) from album) 
+------------------------------------------------------
+--8b
+--Listar nome da gravadora com maior número de playlists que possuem pelo menos uma faixa composta pelo compositor Dvorack.
+go
+select g.nome 
+	from gravadora g left outer join album a left outer join faixa f left outer join  faixa_playlist fp inner join playlist p
+		on p.cod_playlist = fp.cod_playlist on fp.num_faixa=f.num_faixa on a.cod_album=f.cod_album  on  g.cod_grav=a.cod_grav 
+			where exists (
+							select *
+								from faixa f2, faixa_compositor fc, compositor cp 
+									where f2.num_faixa = fc.num_faixa and fc.cod_compositor = cp.cod_compositor and cp.nome like 'Dvorack' and f2.num_faixa = f.num_faixa)
+				group by g.cod_grav,g.nome
+					having count(distinct p.cod_playlist) >= all (
+																	select count(distinct p.cod_playlist)
+																		from gravadora g left outer join album a left outer join faixa f left outer join  faixa_playlist fp inner join playlist p
+																			on p.cod_playlist = fp.cod_playlist on fp.num_faixa=f.num_faixa on a.cod_album=f.cod_album  on  g.cod_grav=a.cod_grav 
+																				where exists (
+																								select *
+																									from faixa f2, faixa_compositor fc, compositor cp 
+																										where f2.num_faixa = fc.num_faixa and fc.cod_compositor = cp.cod_compositor and cp.nome like 'Dvorack' and f2.num_faixa = f.num_faixa)
+																					group by g.cod_grav)
+
+go
+
+-------------------------------------------------------
 --8c
 --Listar nome do compositor com maior número de faixas nas playlists existentes
+go
 select cp.nome from compositor cp left outer join faixa_compositor fc left outer join faixa f left outer join faixa_playlist fp left outer join playlist p 
 				on p.cod_playlist = fp.cod_playlist
 				on fp.num_faixa = f.num_faixa

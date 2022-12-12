@@ -1,3 +1,4 @@
+
 create database SpotPer
 	on
 		PRIMARY 
@@ -113,7 +114,7 @@ Create table faixa(
 
 	constraint fk_cod_album_Faixa
 		foreign key (cod_album)
-			references album,
+			references album on delete cascade,
 
 	constraint fk_cod_comp_Faixa
 		foreign key (cod_comp)
@@ -159,7 +160,7 @@ Create table faixa_playlist(
 			references playlist,
 	constraint fk_num_faixa_Faixa_Playlist
 		foreign key (num_faixa)
-			references faixa
+			references faixa on delete cascade
 	
 ) on SpotPer_fg02
 
@@ -190,7 +191,7 @@ Create table faixa_interprete(
 
 	constraint fk_num_faixa_faixa_interprete
 		foreign key (num_faixa)
-			references faixa
+			references faixa on delete cascade
 
 ) on SpotPer_fg01
 
@@ -238,7 +239,7 @@ Create table faixa_compositor(
 
 	constraint pk_num_faixa_faixa_compositor
 		foreign key (num_faixa)
-			references faixa
+			references faixa on delete cascade
 
 ) on SpotPer_fg01
 
